@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Classes\UserData;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -40,5 +45,15 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'extension' => AsArrayObject::class,
     ];
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            fn (string $value) => ucfirst($value),
+            fn (string $value) => mb_strtolower($value),
+        )->shouldCache();
+    }
+
 }
